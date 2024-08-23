@@ -34,26 +34,31 @@ st.title("Cykelförmån Kalkylator")
 
 st.write("""
 Denna app hjälper dig att beräkna cykelförmån baserat på olika parametrar. 
-Fyll i uppgifterna nedan och se resultatet i realtid!
+Justera slidersen nedan och se resultatet i realtid!
 """)
 
 is_elcykel = st.checkbox("Är det en elcykel?")
-cykel_kostnad = st.number_input("Cykelns kostnad (SEK)", min_value=0.0, value=5000.0, step=100.0)
-antal_ar = st.number_input("Antal år cykeln förväntas hålla", min_value=1, value=6, step=1)
-service_kostnad = st.number_input("Årlig kostnad för service och reparationer (SEK)", min_value=0.0, value=300.0, step=50.0)
-statslanerantan = st.number_input("Statslåneräntan (%)", min_value=0.0, value=2.62, step=0.01)
 
-if st.button("Beräkna förmånsvärde"):
-    resultat = calculate_cykelforman(is_elcykel, cykel_kostnad, antal_ar, service_kostnad, statslanerantan)
-    
-    st.write("### Resultat")
-    for key, value in resultat.items():
-        st.write(f"**{key}:** {value} SEK")
-    
-    if resultat["Beskattningsbart belopp"] > 0:
-        st.write("Du behöver beskattas för cykelförmånen.")
-    else:
-        st.write("Du behöver inte beskattas för cykelförmånen.")
+col1, col2 = st.columns(2)
+
+with col1:
+    cykel_kostnad = st.slider("Cykelns kostnad (SEK)", min_value=1000, max_value=50000, value=5000, step=100)
+    antal_ar = st.slider("Antal år cykeln förväntas hålla", min_value=1, max_value=10, value=6, step=1)
+
+with col2:
+    service_kostnad = st.slider("Årlig kostnad för service och reparationer (SEK)", min_value=0, max_value=2000, value=300, step=50)
+    statslanerantan = st.slider("Statslåneräntan (%)", min_value=0.0, max_value=10.0, value=2.62, step=0.01)
+
+resultat = calculate_cykelforman(is_elcykel, cykel_kostnad, antal_ar, service_kostnad, statslanerantan)
+
+st.write("### Resultat")
+for key, value in resultat.items():
+    st.write(f"**{key}:** {value:.2f} SEK")
+
+if resultat["Beskattningsbart belopp"] > 0:
+    st.write("Du behöver beskattas för cykelförmånen.")
+else:
+    st.write("Du behöver inte beskattas för cykelförmånen.")
 
 st.write("""
 ### Förklaring
